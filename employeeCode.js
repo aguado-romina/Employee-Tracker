@@ -1,5 +1,6 @@
 let mysql = require("mysql");
 let inquirer = require("inquirer");
+let cTable = require("console.table");
 
 let connection = mysql.createConnection({
   host: "localhost",
@@ -68,27 +69,32 @@ function runEmployeeManagment() {
       }
     });
 }
-function viewDepartments() {
-  inquirer
-    .prompt({
-      name: "artist",
-      type: "input",
-      message: "What Deparment would you like to check?",
-    })
-    .then(function (answer) {
-      let query = "SELECT position, song, year FROM top5000 WHERE ?";
-      connection.query(query, { artist: answer.artist }, function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-          console.log(
-            "Position: " +
-              res[i].position +
-              " || Song: " +
-              res[i].song +
-              " || Year: " +
-              res[i].year
-          );
-        }
-        runEmployeeManagment();
-      });
-    });
+function viewEmployees() {
+  let query = "SELECT * FROM employee_info";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.log(res);
+  });
+  // inquirer
+  //   .prompt({
+  //     name: "employee",
+  //     type: "input",
+  //     message: "VIEW Employees",
+  //   })
+  //   .then(function (answer) {
+  //     let query = "SELECT * FROM employee_info";
+  //     connection.query(query, { artist: answer.artist }, function (err, res) {
+  //       for (var i = 0; i < res.length; i++) {
+  //         console.log(
+  //           "Position: " +
+  //             res[i].position +
+  //             " || Song: " +
+  //             res[i].song +
+  //             " || Year: " +
+  //             res[i].year
+  //         );
+  //       }
+  //       runEmployeeManagment();
+  //     });
+  //   });
 }
