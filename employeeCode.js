@@ -197,7 +197,7 @@ function addEmployees() {
         ])
         .then(function (res) {
           connection.query(
-            "INSERT INTO employee_info SET ? ",
+            "INSERT INTO employee_info employee_info.first_name, employee_info.last_name, employee_info.role_id, employee_info.managers_id SELECT role_info.title, role_info.salary, role_info.department_id FROM role_info",
             {
               first_name: res.FirstName,
               last_name: res.LastName,
