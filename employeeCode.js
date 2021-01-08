@@ -109,7 +109,7 @@ function addDepartments() {
       let query = connection.query(
         "INSERT INTO department_info SET ? ",
         {
-          name: res.department_name,
+          department_name: res.name,
         },
         function (err) {
           if (err) throw err;
