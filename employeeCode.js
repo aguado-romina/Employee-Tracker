@@ -153,3 +153,67 @@ function addRoles() {
     }
   );
 }
+function addEmployees() {
+  connection.query(
+    "SELECT employee_info.first_name AS FirstName, employee_info.last_name AS LastName, employee_info.role_id AS Role, employee_info.managers_id AS ManagerID, role_info.title AS Title, role_info.salary AS Salary, role_info.department_id AS Department FROM employee_info, role_info JOIN role_info ON employee_info.id = role_info.id",
+    function (err, res) {
+      inquirer
+        .prompt([
+          {
+            name: "FirstName",
+            type: "input",
+            message: "What is the first name?",
+          },
+          {
+            name: "LastName",
+            type: "input",
+            message: "What is the last name?",
+          },
+          {
+            name: "Role",
+            type: "input",
+            message: "What is the role ID?",
+          },
+          {
+            name: "ManagerID",
+            type: "input",
+            message: "What is the manager ID?",
+          },
+          {
+            name: "Title",
+            type: "input",
+            message: "What is the role title?",
+          },
+          {
+            name: "Salary",
+            type: "input",
+            message: "What is the salary?",
+          },
+          {
+            name: "Department",
+            type: "input",
+            message: "What is the department?",
+          },
+        ])
+        .then(function (res) {
+          connection.query(
+            "INSERT INTO employee_info SET ? ",
+            {
+              first_name: res.FirstName,
+              last_name: res.LastName,
+              role_id: res.Role,
+              managers_id: res.ManagerID,
+              title: res.Title,
+              salary: res.Salary,
+              department_id: res.Department,
+            },
+            function (err) {
+              if (err) throw err;
+              console.table(res);
+              runEmployeeManagment();
+            }
+          );
+        });
+    }
+  );
+}
