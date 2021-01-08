@@ -73,8 +73,6 @@ function runEmployeeManagment() {
 function viewDepartments() {
   //let query = "SELECT * FROM department_info";
   let query = "SELECT department_name FROM department_info";
-  // let query =
-  //   "SELECT employee_info.first_name, employee_info.last_name, department_info.department_name AS Department FROM employee_info JOIN role_id ON employee_info.role_id = role_info.id JOIN department_info ON role_info.department_id = department_info.id ORDER BY employee_info.id";
   connection.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
@@ -82,10 +80,8 @@ function viewDepartments() {
   });
 }
 function viewEmployees() {
-  // let query =
-  //   "SELECT employee_info.first_name, employee_info.last_name, role_info.title, role_info.salary, department_info.department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee_info INNER JOIN role_id on role_info.id = employee_info.role_id INNER JOIN department_info on department_info.id = role_info.department_id left join employee_info e on employee_info.manager_id = e.id";
   let query =
-    "SELECT employee_info.first_name, employee_info.last_name, role_info.title, role_info.salary, department_info.department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee_info INNER JOIN role_id on  employee_info.role_id = role_info.id INNER JOIN department_info on role_info.department_id = department_info.id LEFT JOIN employee_info e on employee_info.manager_id = e.id";
+    "SELECT employee_info.first_name, employee_info.last_name, employee_info.role_id, employee_info.managers_id, role_info.title, role_info.salary, role_info.department_id FROM employee_info INNER JOIN role_info ON employee_info.id = role_info.id";
   connection.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
