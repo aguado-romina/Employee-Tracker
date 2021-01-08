@@ -119,3 +119,37 @@ function addDepartments() {
       );
     });
 }
+function addRoles() {
+  connection.query(
+    "SELECT role_info.title AS Title, role_info.salary AS Salary FROM role_info",
+    function (err, res) {
+      inquirer
+        .prompt([
+          {
+            name: "Title",
+            type: "input",
+            message: "What is the roles Title?",
+          },
+          {
+            name: "Salary",
+            type: "input",
+            message: "What is the Salary?",
+          },
+        ])
+        .then(function (res) {
+          connection.query(
+            "INSERT INTO role_info SET ? ",
+            {
+              title: res.Title,
+              salary: res.Salary,
+            },
+            function (err) {
+              if (err) throw err;
+              console.table(res);
+              runEmployeeManagment();
+            }
+          );
+        });
+    }
+  );
+}
