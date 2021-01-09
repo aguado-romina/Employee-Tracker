@@ -205,7 +205,53 @@ function addEmployees() {
           },
           function (err) {
             if (err) throw err;
-            console.log("Your employee has been added!");
+            console.table(res);
+            runEmployeeManagment();
+          }
+        );
+      });
+  });
+}
+function updateEmployeeRoles() {
+  let allemp = [];
+  connection.query("SELECT * FROM employee_info", function (err, answer) {
+    // console.log(answer);
+    for (let i = 0; i < answer.length; i++) {
+      let employeeString =
+        answer[i].id + " " + answer[i].first_name + " " + answer[i].last_name;
+      allemp.push(employeeString);
+    }
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "updateEmployeeRoles",
+          message: "select employee to update role",
+          choices: allemp,
+        },
+        {
+          type: "list",
+          message: "select new role",
+          choices: ["manager", "Sales Lead"],
+          name: "newrole",
+        },
+      ])
+      .then(function (answer) {
+        console.log("about to update", answer);
+        const idToUpdate = {};
+        idToUpdate.employeeId = parseInt(
+          answer.updateEmployeeRoles.split(" ")[0]
+        );
+        if (answer.newrole === "Manager") {
+          idToUpdate.role_id = 196;
+        } else if (answer.newrole === "Sales Lead") {
+          idToUpdate.role_id = 278;
+        }
+        connection.query(
+          "UPDATE employee_info SET role_id = ? WHERE id = ?",
+          [idToUpdate.role_id, idToUpdate.employeeId],
+          function (err, data) {
             runEmployeeManagment();
           }
         );
