@@ -233,7 +233,7 @@ function updateEmployeeRoles() {
         {
           type: "list",
           message: "select new role",
-          choices: ["manager", "Sales Lead"],
+          choices: ["Manager", "Sales Lead"],
           name: "newrole",
         },
       ])
