@@ -81,7 +81,8 @@ function viewDepartments() {
 }
 function viewEmployees() {
   let query =
-    "SELECT employee_info.first_name, employee_info.last_name, employee_info.role_id, employee_info.managers_id, role_info.title, role_info.salary, role_info.department_id FROM employee_info INNER JOIN role_info ON employee_info.id = role_info.id";
+    "SELECT employee_info.first_name, employee_info.last_name, employee_info.role_id, employee_info.managers_id, role_info.title, role_info.salary, role_info.department_id FROM employee_info left JOIN role_info ON employee_info.role_id = role_info.id";
+
   connection.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
@@ -154,66 +155,60 @@ function addRoles() {
   );
 }
 function addEmployees() {
-  connection.query(
-    "SELECT employee_info.first_name AS FirstName, employee_info.last_name AS LastName, employee_info.role_id AS Role, employee_info.managers_id AS ManagerID, role_info.title AS Title, role_info.salary AS Salary, role_info.department_id AS Department FROM employee_info, role_info JOIN role_info ON employee_info.id = role_info.id",
-    function (err, res) {
-      inquirer
-        .prompt([
-          {
-            name: "FirstName",
-            type: "input",
-            message: "What is the first name?",
-          },
-          {
-            name: "LastName",
-            type: "input",
-            message: "What is the last name?",
-          },
-          {
-            name: "Role",
-            type: "input",
-            message: "What is the role ID?",
-          },
-          {
-            name: "ManagerID",
-            type: "input",
-            message: "What is the manager ID?",
-          },
-          {
-            name: "Title",
-            type: "input",
-            message: "What is the role title?",
-          },
-          {
-            name: "Salary",
-            type: "input",
-            message: "What is the salary?",
-          },
-          {
-            name: "Department",
-            type: "input",
-            message: "What is the department?",
-          },
-        ])
-        .then(function (res) {
-          connection.query(
-            "INSERT INTO employee_info employee_info.first_name, employee_info.last_name, employee_info.role_id, employee_info.managers_id SELECT role_info.title, role_info.salary, role_info.department_id FROM role_info",
-            {
-              first_name: res.FirstName,
-              last_name: res.LastName,
-              role_id: res.Role,
-              managers_id: res.ManagerID,
-              title: res.Title,
-              salary: res.Salary,
-              department_id: res.Department,
-            },
-            function (err) {
-              if (err) throw err;
-              console.table(res);
-              runEmployeeManagment();
+  connection.query("SELECT * FROM role_info", function (err, res) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "first_name",
+          type: "input",
+          message: "What is the employee fist name? ",
+        },
+        {
+          name: "last_name",
+          type: "input",
+          message: "What is the employee last name? ",
+        },
+        {
+          name: "managers_id",
+          type: "input",
+          message: "What is the manager ID? ",
+        },
+        {
+          name: "role",
+          type: "list",
+          choices: function () {
+            let roleArray = [];
+            for (let i = 0; i < res.length; i++) {
+              roleArray.push(res[i].title);
             }
-          );
-        });
-    }
-  );
+            return roleArray;
+          },
+          message: "What is this employee role ID? ",
+        },
+      ])
+      .then(function (answer) {
+        let role_id;
+        for (let a = 0; a < res.length; a++) {
+          if (res[a].title == answer.role) {
+            role_id = res[a].id;
+            console.log(role_id);
+          }
+        }
+        connection.query(
+          "INSERT INTO employee_info SET ?",
+          {
+            first_name: answer.first_name,
+            last_name: answer.last_name,
+            managers_id: answer.managers_id,
+            role_id: role_id,
+          },
+          function (err) {
+            if (err) throw err;
+            console.log("Your employee has been added!");
+            runEmployeeManagment();
+          }
+        );
+      });
+  });
 }
